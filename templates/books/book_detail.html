@@ -1,11 +1,30 @@
 {% extends '_base.html' %}
-
+{% load crispy_forms_tags %}
 {% block title %} {{book.title}} {% endblock title %}
 
 {% block content %}
   <div class="book-detail">
-    <h2><a href="*">{{book.title}} </a> </h2>
+    {% if book.cover %}
+      <img class="bookcover" src="{{book.cover.url}}" alt="{{book.title}}">
+    {% endif %}
+    <h2><a href="">{{book.title}} </a> </h2>
     <p> Author: {{book.author}}</p>
     <p>Price: {{book.price}}</p>
+    <div>
+      <a href="{% url 'book_delete' book.id%}"> <button class="btn btn-danger">Delete</button></a>
+      <a href="{% url 'book_edit' book.id %}"> <button class="btn btn-primary">Edit</button></a>
+      <h3>Reviews</h3>
+      <ul>
+          {% for review in book.reviews.all %}
+            <li> {{review.review}} ({{review.author}}) </li>
+          {% endfor %}
+      </ul>
+    </div>
+
+    <h4>Add a comment</h4>
+    <form action="" method="post">{% csrf_token %}
+    {{ form|crispy }}
+    <button class="btn btn-success ml-2" type="submit">Save</button>
+    </form>
   </div>
 {% endblock content %}
