@@ -6,7 +6,7 @@ from django.urls import reverse
 from .forms import ReviewForm
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin
 from django.views.generic.detail import SingleObjectMixin
-
+from django.db.models import Q
 
 # Create your views here.
 
@@ -100,3 +100,16 @@ class BookEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def test_func(self):
         obj = self.get_object()
         return obj.post_author == self.request.user
+
+
+class SearchResultsListView(ListView):
+    model = Book
+    template_name = 'books/search_result.html'
+    context_object_name = 'book_list'
+
+    def get_queryset(self):
+        query = self.request.GET.get('q')
+        return Book.objects.filter(
+            Q(title__icontains=query) | Q(author__icontains=query)
+        )
+
