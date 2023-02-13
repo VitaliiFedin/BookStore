@@ -4,23 +4,26 @@ from .models import Book
 from django.urls import reverse_lazy
 from django.urls import reverse
 from .forms import ReviewForm
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin
 from django.views.generic.detail import SingleObjectMixin
 
 
 # Create your views here.
 
 
-class BookListView(ListView):
+class BookListView(LoginRequiredMixin, ListView):
     template_name = 'books/book_list.html'
     model = Book
     context_object_name = 'book_list'
+    login_url = 'account_login'
 
 
-class ReviewGet(DetailView):
+class ReviewGet(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
     model = Book
     template_name = 'books/book_detail.html'
     context_object_name = 'book'
+    login_url = 'account_login'
+    permission_required = 'books.special_status'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -49,7 +52,7 @@ class ReviewPost(SingleObjectMixin, FormView):
         return reverse('book_detail', kwargs={'pk': book.id})
 
 
-class BookDetailView(LoginRequiredMixin, View):
+class BookDetailView(LoginRequiredMixin,  View):
     def get(self, request, *args, **kwargs):
         view = ReviewGet.as_view()
         return view(request, *args, **kwargs)
@@ -59,24 +62,32 @@ class BookDetailView(LoginRequiredMixin, View):
         return view(request, *args, **kwargs)
 
 
-class BookCreateView(CreateView):
+class BookCreateView(LoginRequiredMixin, CreateView):
     template_name = 'books/book_create.html'
     model = Book
     fields = (
         'title',
         'author',
         'price',
-        'cover',
+        'cover'
     )
 
+    def form_valid(self, form):
+        form.instance.post_author = self.request.user
+        return super().form_valid(form)
 
-class BookDeleteView(DeleteView):
+
+class BookDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     success_url = reverse_lazy('book_list')
     model = Book
     template_name = 'books/book_delete.html'
 
+    def test_func(self):
+        obj = self.get_object()
+        return obj.post_author == self.request.user
 
-class BookEditView(UpdateView):
+
+class BookEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Book
     template_name = 'books/book_edit.html'
     fields = (
@@ -85,3 +96,7 @@ class BookEditView(UpdateView):
         'price',
         'cover',
     )
+
+    def test_func(self):
+        obj = self.get_object()
+        return obj.post_author == self.request.user
