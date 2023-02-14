@@ -3,9 +3,32 @@
 
 {% block content %}
     {% for book in book_list %}
-        <div>
-            <h2> <a href="{{book.get_absolute_url}}">{{book.title}}</a> </h2>
+      <div class="card">
+        <div class="card-header">
+           <a  class="detail_url" href="{{book.get_absolute_url }}"> <span class="font-weight-bold">{{ book.title }}</span></a> &middot;
+            <span class="text-muted">by {{ book.author }} | {{book.price}}$
+            </span>
         </div>
+        <div class="card-body text-center" >
+            <img class="bookcover" src="{{book.cover.url}}" alt="{{book.title}}">
+        </div>
+        <div class="card-footer text-center text-muted">
+            <a href="{% url 'book_edit' book.id %}">Edit</a> |
+            <a href="{% url 'book_delete' book.id %}">Delete</a>
+        </div>
+      </div>
+        <div class="card-footer">
+        {% for review in book.reviews.all %}
+        <p>
+            <span class="font-weight-bold">
+            {{ review.author }} &middot;
+            </span>
+            {{ review }}
+        </p>
+        </div>
+        {% endfor %}
+        <br>
     {% endfor %}
+
 
 {% endblock content %}

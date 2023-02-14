@@ -10,9 +10,10 @@
     <h2><a href="">{{book.title}} </a> </h2>
     <p> Author: {{book.author}}</p>
     <p>Price: {{book.price}}</p>
+    <a href="{% url 'book_delete' book.id%}"> <button class="btn btn-danger">Delete</button></a>
+    <a href="{% url 'book_edit' book.id %}"> <button class="btn btn-primary">Edit</button></a>
+    <div><br></div>
     <div>
-      <a href="{% url 'book_delete' book.id%}"> <button class="btn btn-danger">Delete</button></a>
-      <a href="{% url 'book_edit' book.id %}"> <button class="btn btn-primary">Edit</button></a>
       <h3>Reviews</h3>
       <ul>
           {% for review in book.reviews.all %}

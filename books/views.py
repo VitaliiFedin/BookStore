@@ -102,7 +102,7 @@ class BookEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return obj.post_author == self.request.user
 
 
-class SearchResultsListView(ListView):
+class SearchResultsListView(LoginRequiredMixin, ListView):
     model = Book
     template_name = 'books/search_result.html'
     context_object_name = 'book_list'

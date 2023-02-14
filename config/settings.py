@@ -89,7 +89,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     "default": env.dj_db_url("DATABASE_URL",
-                             default="postgres://postgres@db/postgres")
+                             default="mysql://user:123321@db/mysql")
 }
 
 # Password validation
@@ -144,7 +144,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'accounts.CustomUser'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 # django-allauth config
-LOGIN_REDIRECT_URL = 'home'
+LOGIN_REDIRECT_URL = 'book_list'
 ACCOUNT_LOGOUT_REDIRECT = 'home'
 SITE_ID = 1
 AUTHENTICATION_BACKENDS = (

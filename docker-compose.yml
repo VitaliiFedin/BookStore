@@ -14,12 +14,15 @@ services:
       - "DJANGO_SECRET_KEY=django-insecure-#0e##29+62rgl_*la2+vp&w*x%h+3=bx#u8_r19$$%vxo3wz2pu"
       - "DJANGO_DEBUG=True"
   db:
-    image: postgres:11
+    image: mysql
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
+      - mysql_data:/var/lib/mysql/
     environment:
-      - "POSTGRES_HOST_AUTH_METHOD=trust"
+      - "MYSQL_USER=user"
+      - "MYSQL_DATABASE=mysql"
+      - "MYSQL_PASSWORD=123321"
+      - "MYSQL_ROOT_PASSWORD=123321"
 
 volumes:
-  postgres_data:
+  mysql_data:
 
